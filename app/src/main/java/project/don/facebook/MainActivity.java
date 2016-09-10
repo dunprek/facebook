@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
                         USER_TOKEN = loginResult.getAccessToken().getToken();
                         info.setText("Access Token " + USER_TOKEN);
+                        Log.d("TAGGGGGGGGGGGGG",USER_TOKEN);
+                        Log.d("wuahh","------------------------------------------------------");
                         initGraph();
                     }
 
