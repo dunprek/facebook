@@ -4,7 +4,7 @@ package project.don.facebook.model;
  * Created by don on 9/11/2016.
  */
 public class ModelImages {
-    String imageUrl;
+   public String imageUrl;
 
     public String getImageUrl() {
         return imageUrl;
