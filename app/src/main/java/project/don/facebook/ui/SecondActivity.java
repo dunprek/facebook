@@ -25,10 +25,11 @@ import project.don.facebook.model.DataModel;
 public class SecondActivity extends AppCompatActivity {
 
     private String mId;
-    private GridAdapter mAdapter;
+    GridAdapter mAdapter;
     private RecyclerView recyclerView;
-    private final List<DataModel> albumList = new ArrayList<DataModel>();
-    private GridLayoutManager lLayout;
+    private final ArrayList<DataModel> albumList = new ArrayList<DataModel>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +48,10 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     private void initUi(){
-        lLayout = new GridLayoutManager(SecondActivity.this, 4);
-        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView)findViewById(R.id.card_recycler_view);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(lLayout);
+
+
     }
 
 
@@ -78,11 +79,11 @@ public class SecondActivity extends AppCompatActivity {
                                             final DataModel dataModel = new DataModel();
                                             //add data to the model
                                             dataModel.setUrl(jRoot.getString("picture"));
-
+                                            albumList.add(dataModel);
 
                                                 /*add data to arraylist*/
                                             mAdapter = new GridAdapter(getApplicationContext(), albumList);
-                                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                            RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(),2);
                                             recyclerView.setLayoutManager(mLayoutManager);
                                             recyclerView.setAdapter(mAdapter);
 

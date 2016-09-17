@@ -11,49 +11,50 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import project.don.facebook.R;
 import project.don.facebook.model.DataModel;
-import project.don.facebook.ui.SecondActivity;
 
 /**
  * Created by don on 9/18/2016.
  */
 public class GridAdapter extends RecyclerView.Adapter<GridAdapter.ViewHolder> {
+    private ArrayList<DataModel> android;
     private Context context;
-    private List<DataModel> data;
 
-    public GridAdapter(Context context, List<DataModel> data) {
+    public GridAdapter(Context context,ArrayList<DataModel> android) {
+        this.android = android;
         this.context = context;
-        this.data = data;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageUrl;
+    @Override
+    public GridAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_grid, viewGroup, false);
+        return new ViewHolder(view);
+    }
 
-        public ViewHolder(View view) {
-            super(view);
-            imageUrl = (ImageView) itemView.findViewById(R.id.ivCover);
-        }
+    @Override
+    public void onBindViewHolder(GridAdapter.ViewHolder viewHolder, int i) {
 
+        Picasso.with(context).load(android.get(i).getUrl()).fit().into(viewHolder.img);
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return android.size();
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int type) {
-        View viewItem = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_list, viewGroup, false);
-        return new ViewHolder(viewItem);
-    }
+    public class ViewHolder extends RecyclerView.ViewHolder{
 
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-        Picasso.with(context).load(data.get(position).getUrl()).fit().into(viewHolder.imageUrl);
+        private ImageView img;
+        public ViewHolder(View view) {
+            super(view);
+
+
+            img = (ImageView) view.findViewById(R.id.ivCover);
+        }
     }
 
 }
-

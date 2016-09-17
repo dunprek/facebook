@@ -47,13 +47,6 @@
             android:textStyle="italic"
             android:text="TOTAL PHOTOS"
             android:textColor="#ff7300" />
-        <TextView
-            android:id="@+id/tvId"
-            android:visibility="visible"
-            android:text="id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     </LinearLayout>
 
 
