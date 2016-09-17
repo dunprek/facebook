@@ -18,33 +18,33 @@
 
         <ImageView
             android:id="@+id/ivCover"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="30dp"
             android:layout_width="150dp"
             android:layout_height="150dp" />
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tvAlbumName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginLeft="20dp"
-            android:orientation="vertical">
+            android:text="ALBUM NAME"
+            android:textSize="9dp"
+            android:layout_marginRight="20dp"
+            android:textStyle="italic"
+            android:textColor="#ff0055" />
 
-
-            <TextView
-                android:id="@+id/tvAlbumName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:textColor="#ff0055"
-                android:layout_marginTop="10dp"
-                android:text="ALBUM NAME" />
-
-            <TextView
-                android:id="@+id/tvPhotoCount"
-                android:textColor="#ff7300"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TOTAL PHOTOS" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvPhotoCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="9dp"
+            android:textStyle="italic"
+            android:text="TOTAL PHOTOS"
+            android:textColor="#ff7300" />
 
     </LinearLayout>
 

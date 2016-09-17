@@ -58,8 +58,8 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         DataModel DataModel = DataModelsList.get(position);
-        holder.albumName.setText(DataModel.getAlbumName());
-        holder.photoCount.setText(DataModel.getPhotoCount());
+        holder.albumName.setText("Album Name "+DataModel.getAlbumName());
+        holder.photoCount.setText("Total Photos"+DataModel.getPhotoCount());
         Picasso.with(context).load(DataModel.getUrl()).fit().into(holder.imageView);
     }
 

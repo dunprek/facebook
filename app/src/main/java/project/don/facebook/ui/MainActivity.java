@@ -5,11 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.TextView;
 
 
@@ -35,7 +33,6 @@ import java.util.List;
 import project.don.facebook.R;
 import project.don.facebook.adapter.DataAdapter;
 import project.don.facebook.model.DataModel;
-import project.don.facebook.model.DataUrl;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SERIOUSLY";
