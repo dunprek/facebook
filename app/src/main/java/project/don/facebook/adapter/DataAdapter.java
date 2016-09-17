@@ -7,7 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,22 +25,26 @@ import project.don.facebook.model.DataModel;
 public class DataAdapter extends RecyclerView.Adapter<DataAdapter.MyViewHolder> {
 
     private List<DataModel> DataModelsList;
+    private Context context;
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView albumName, photoCount;
+        public ImageView imageView;
 
         public MyViewHolder(View view) {
             super(view);
             albumName = (TextView) view.findViewById(R.id.tvAlbumName);
             photoCount = (TextView) view.findViewById(R.id.tvPhotoCount);
+            imageView = (ImageView) view.findViewById(R.id.ivCover);
 
         }
     }
 
 
-    public DataAdapter(List<DataModel> DataModelsList) {
+    public DataAdapter(Context context, List<DataModel> DataModelsList) {
         this.DataModelsList = DataModelsList;
+        this.context = context;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class DataAdapter extends RecyclerView.Adapter<DataAdapter.MyViewHolder> 
         DataModel DataModel = DataModelsList.get(position);
         holder.albumName.setText(DataModel.getAlbumName());
         holder.photoCount.setText(DataModel.getPhotoCount());
-
+        Picasso.with(context).load(DataModel.getUrl()).fit().into(holder.imageView);
     }
 
     @Override

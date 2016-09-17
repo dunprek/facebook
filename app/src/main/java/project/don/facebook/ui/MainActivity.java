@@ -1,40 +1,41 @@
 package project.don.facebook.ui;
 
-        import android.content.Intent;
-        import android.support.v7.app.AppCompatActivity;
-        import android.os.Bundle;
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 
 
-        import android.support.v7.widget.DefaultItemAnimator;
-        import android.support.v7.widget.LinearLayoutManager;
-        import android.support.v7.widget.RecyclerView;
-        import android.util.Log;
-        import android.widget.ListView;
-        import android.widget.TextView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.ListView;
+import android.widget.TextView;
 
 
-        import com.facebook.AccessToken;
-        import com.facebook.CallbackManager;
-        import com.facebook.FacebookCallback;
-        import com.facebook.FacebookException;
-        import com.facebook.FacebookSdk;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 
-        import com.facebook.GraphRequest;
-        import com.facebook.GraphResponse;
-        import com.facebook.login.LoginManager;
-        import com.facebook.login.LoginResult;
-        import com.facebook.login.widget.LoginButton;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-        import java.util.ArrayList;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
-        import project.don.facebook.R;
-        import project.don.facebook.adapter.DataAdapter;
-        import project.don.facebook.model.DataModel;
+import project.don.facebook.R;
+import project.don.facebook.adapter.DataAdapter;
+import project.don.facebook.model.DataModel;
+import project.don.facebook.model.DataUrl;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SERIOUSLY";
@@ -42,12 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private String USER_TOKEN;
-
-    private List<DataModel> movieList = new ArrayList<>();
+    private final List<DataModel> albumList = new ArrayList<DataModel>();
     private RecyclerView recyclerView;
-    private DataAdapter dataAdapter;
-     DataAdapter mAdapter;
-
+    DataAdapter mAdapter;
 
 
     @Override
@@ -60,15 +58,15 @@ public class MainActivity extends AppCompatActivity {
         initLogin();
     }
 
-    private void initUi(){
+    private void initUi() {
         info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.login_button);
         recyclerView = (RecyclerView) findViewById(R.id.rv);
 
 
-
     }
-    private void initLogin(){
+
+    private void initLogin() {
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
                     @Override
@@ -76,8 +74,8 @@ public class MainActivity extends AppCompatActivity {
                         // App code
                         USER_TOKEN = loginResult.getAccessToken().getToken();
                         info.setText("Access Token " + USER_TOKEN);
-                        Log.d("TAGGGGGGGGGGGGG",USER_TOKEN);
-                        Log.d("wuahh","------------------------------------------------------");
+                        Log.d("TAGGGGGGGGGGGGG", USER_TOKEN);
+                        Log.d("wuahh", "------------------------------------------------------");
                         initAlbum();
                     }
 
@@ -96,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initAlbum(){
+    private void initAlbum() {
 
         GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
@@ -105,61 +103,59 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onCompleted(GraphResponse response) {
                         // Insert your code here
-                        if(response!=null){
+                        if (response != null) {
 
-                            JSONObject jsonObject  = response.getJSONObject();
-                             if(jsonObject!=null){
+                            JSONObject jsonObject = response.getJSONObject();
+                            if (jsonObject != null) {
 
-                                 try {
-                                     JSONObject albumsJson = jsonObject.optJSONObject("albums");
-                                        if(albumsJson!=null){
-                                            JSONArray dataJson = albumsJson.optJSONArray("data");
+                                try {
+                                    JSONObject albumsJson = jsonObject.optJSONObject("albums");
+                                    if (albumsJson != null) {
+                                        JSONArray dataJson = albumsJson.optJSONArray("data");
+                                        for (int i = 0; i < dataJson.length(); i++) {
+                                            JSONObject jRoot = dataJson.getJSONObject(i);
+                                            final DataModel dataModel = new DataModel();
+                                            //add data to the model
+                                            dataModel.setAlbumName(jRoot.getString("name"));
+                                            dataModel.setPhotoCount(jRoot.getString("photo_count"));
 
-                                            for(int i=0; i<dataJson.length(); i++){
-
-                                                JSONObject jRoot = dataJson.getJSONObject(i);
-
-
-
-                                                //add data to the model
-                                                DataModel dataModel = new DataModel();
-
-                                                dataModel.setAlbumName(jRoot.getString("name"));
-                                                dataModel.setPhotoCount(jRoot.getString("photo_count"));
-
-                                                /*add data to arraylist*/
-                                                mAdapter = new DataAdapter(movieList);
-                                                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-                                                recyclerView.setLayoutManager(mLayoutManager);
-                                                recyclerView.setItemAnimator(new DefaultItemAnimator());
-                                                recyclerView.setAdapter(mAdapter);
-                                                movieList.add(dataModel);
-
+                                            JSONObject pictureRoot = jRoot.getJSONObject("picture");
+                                            if (pictureRoot != null) {
+                                                JSONObject dataRoot = pictureRoot.getJSONObject("data");
+                                                if (dataRoot != null) {
+                                                    dataModel.setUrl(dataRoot.getString("url"));
+                                                    albumList.add(dataModel);
+                                                }
                                             }
 
 
 
+                                                /*add data to arraylist*/
+                                            mAdapter = new DataAdapter(getApplicationContext(), albumList);
+                                            RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                            recyclerView.setLayoutManager(mLayoutManager);
+                                            recyclerView.setAdapter(mAdapter);
 
-                                        }else {
-                                            System.out.println("///////////////////////////NO JSON DATA////////////////////////////");
+
                                         }
 
 
-                                 } catch (JSONException e) {
-                                     e.printStackTrace();
-                                 }
-                             }else {
-                                 System.out.println("--------------------------NO JSON ALBUMS---------------------------------");
-                             }
+                                    } else {
+                                        System.out.println("///////////////////////////NO JSON DATA////////////////////////////");
+                                    }
 
 
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                System.out.println("--------------------------NO JSON ALBUMS---------------------------------");
+                            }
 
 
-
-                        }else {
+                        } else {
                             System.out.println("****************************NO JSON RESPONSE*****************************");
                         }
-
 
 
                     }
@@ -171,8 +167,6 @@ public class MainActivity extends AppCompatActivity {
         request.executeAsync();
 
     }
-
-
 
 
     @Override
