@@ -5,7 +5,7 @@ package project.don.facebook.model;
  */
 public class DataModel {
     String albumName ;
-    int photoCount;
+    String photoCount;
 
     public DataModel(){
 
@@ -18,11 +18,11 @@ public class DataModel {
         this.albumName = albumName;
     }
 
-    public int getPhotoCount() {
+    public String getPhotoCount() {
         return photoCount;
     }
 
-    public void setPhotoCount(int photoCount) {
+    public void setPhotoCount(String photoCount) {
         this.photoCount = photoCount;
     }
 }

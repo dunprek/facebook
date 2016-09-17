@@ -5,6 +5,9 @@ package project.don.facebook.ui;
         import android.os.Bundle;
 
 
+        import android.support.v7.widget.DefaultItemAnimator;
+        import android.support.v7.widget.LinearLayoutManager;
+        import android.support.v7.widget.RecyclerView;
         import android.util.Log;
         import android.widget.ListView;
         import android.widget.TextView;
@@ -27,6 +30,7 @@ package project.don.facebook.ui;
         import org.json.JSONObject;
 
         import java.util.ArrayList;
+        import java.util.List;
 
         import project.don.facebook.R;
         import project.don.facebook.adapter.DataAdapter;
@@ -38,9 +42,12 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private String USER_TOKEN;
-    private ListView mListView;
+
+    private List<DataModel> movieList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private DataAdapter dataAdapter;
      DataAdapter mAdapter;
-     ArrayList<DataModel> mDataModel;
+
 
 
     @Override
@@ -56,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     private void initUi(){
         info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        mListView = (ListView)findViewById(R.id.lv);
+        recyclerView = (RecyclerView) findViewById(R.id.rv);
+
+
+
     }
     private void initLogin(){
         LoginManager.getInstance().registerCallback(callbackManager,
@@ -109,18 +119,22 @@ public class MainActivity extends AppCompatActivity {
 
                                                 JSONObject jRoot = dataJson.getJSONObject(i);
 
+
+
                                                 //add data to the model
                                                 DataModel dataModel = new DataModel();
 
                                                 dataModel.setAlbumName(jRoot.getString("name"));
-                                                dataModel.setPhotoCount(jRoot.getInt("photo_count"));
-
+                                                dataModel.setPhotoCount(jRoot.getString("photo_count"));
 
                                                 /*add data to arraylist*/
-                                                mDataModel.add(dataModel);
+                                                mAdapter = new DataAdapter(movieList);
+                                                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+                                                recyclerView.setLayoutManager(mLayoutManager);
+                                                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                                                recyclerView.setAdapter(mAdapter);
+                                                movieList.add(dataModel);
 
-                                                DataAdapter dataAdapter = new DataAdapter(getApplicationContext(),R.layout.item_list,mDataModel);
-                                                mListView.setAdapter(dataAdapter);
                                             }
 
 
