@@ -1,6 +1,7 @@
 package project.don.facebook.ui;
 
 import android.content.Intent;
+import android.graphics.Movie;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -8,7 +9,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.facebook.AccessToken;
@@ -34,6 +37,7 @@ import project.don.facebook.R;
 import project.don.facebook.adapter.DataAdapter;
 import project.don.facebook.model.DataModel;
 
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SERIOUSLY";
     private TextView info;
@@ -55,10 +59,12 @@ public class MainActivity extends AppCompatActivity {
         initLogin();
     }
 
+
     private void initUi() {
         info = (TextView) findViewById(R.id.info);
         loginButton = (LoginButton) findViewById(R.id.login_button);
         recyclerView = (RecyclerView) findViewById(R.id.rv);
+
 
 
     }
@@ -74,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("TAGGGGGGGGGGGGG", USER_TOKEN);
                         Log.d("wuahh", "------------------------------------------------------");
                         initAlbum();
+
+
                     }
 
                     @Override
@@ -110,11 +118,16 @@ public class MainActivity extends AppCompatActivity {
                                     if (albumsJson != null) {
                                         JSONArray dataJson = albumsJson.optJSONArray("data");
                                         for (int i = 0; i < dataJson.length(); i++) {
-                                            JSONObject jRoot = dataJson.getJSONObject(i);
+                                            JSONObject jRoot = dataJson.optJSONObject(i);
                                             final DataModel dataModel = new DataModel();
+
                                             //add data to the model
                                             dataModel.setAlbumName(jRoot.getString("name"));
                                             dataModel.setPhotoCount(jRoot.getString("photo_count"));
+                                            dataModel.setId(jRoot.getString("id"));
+
+
+
 
                                             JSONObject pictureRoot = jRoot.getJSONObject("picture");
                                             if (pictureRoot != null) {
@@ -122,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                                                 if (dataRoot != null) {
                                                     dataModel.setUrl(dataRoot.getString("url"));
                                                     albumList.add(dataModel);
+
                                                 }
                                             }
 
@@ -132,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                                             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
                                             recyclerView.setLayoutManager(mLayoutManager);
                                             recyclerView.setAdapter(mAdapter);
+
 
 
                                         }
@@ -171,6 +186,9 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
+
+
+
 }
 
 
