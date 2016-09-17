@@ -4,36 +4,33 @@ package project.don.facebook.ui;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
 
-        import android.support.v7.widget.LinearLayoutManager;
-        import android.support.v7.widget.RecyclerView;
+
         import android.util.Log;
-        import android.widget.AdapterView;
+        import android.widget.ListView;
         import android.widget.TextView;
+
 
         import com.facebook.AccessToken;
         import com.facebook.CallbackManager;
         import com.facebook.FacebookCallback;
         import com.facebook.FacebookException;
         import com.facebook.FacebookSdk;
+
         import com.facebook.GraphRequest;
         import com.facebook.GraphResponse;
         import com.facebook.login.LoginManager;
         import com.facebook.login.LoginResult;
         import com.facebook.login.widget.LoginButton;
-        import com.google.gson.Gson;
-        import com.google.gson.GsonBuilder;
 
         import org.json.JSONArray;
         import org.json.JSONException;
         import org.json.JSONObject;
 
         import java.util.ArrayList;
-        import java.util.Arrays;
-        import java.util.List;
 
         import project.don.facebook.R;
-        import project.don.facebook.adapter.ImageAdapter;
-        import project.don.facebook.model.ModelImages;
+        import project.don.facebook.adapter.DataAdapter;
+        import project.don.facebook.model.DataModel;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "SERIOUSLY";
@@ -41,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private LoginButton loginButton;
     private CallbackManager callbackManager;
     private String USER_TOKEN;
-    private RecyclerView recyclerView;
-    private ImageAdapter adapter;
-
+    private ListView mListView;
+     DataAdapter mAdapter;
+     ArrayList<DataModel> mDataModel;
 
 
     @Override
@@ -52,12 +49,15 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_main);
-        info = (TextView) findViewById(R.id.info);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-
+        initUi();
         initLogin();
     }
 
+    private void initUi(){
+        info = (TextView) findViewById(R.id.info);
+        loginButton = (LoginButton) findViewById(R.id.login_button);
+        mListView = (ListView)findViewById(R.id.lv);
+    }
     private void initLogin(){
         LoginManager.getInstance().registerCallback(callbackManager,
                 new FacebookCallback<LoginResult>() {
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         info.setText("Access Token " + USER_TOKEN);
                         Log.d("TAGGGGGGGGGGGGG",USER_TOKEN);
                         Log.d("wuahh","------------------------------------------------------");
-                        initGraph();
+                        initAlbum();
                     }
 
                     @Override
@@ -85,64 +85,82 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void initGraph() {
-        GraphRequest request = GraphRequest.newMeRequest(
+
+    private void initAlbum(){
+
+        GraphRequest request = GraphRequest.newGraphPathRequest(
                 AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
+                "/me/",
+                new GraphRequest.Callback() {
                     @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
+                    public void onCompleted(GraphResponse response) {
                         // Insert your code here
+                        if(response!=null){
 
-                        if (response != null) {
-                            JSONObject result = response.getJSONObject();
-                            if (result != null) {
-                                JSONObject albumsJson = result.optJSONObject("albums");
-                                if (albumsJson != null) {
-                                    try {
-                                        JSONArray dataAr = albumsJson.getJSONArray("data");
-                                        for (int i = 0; i < dataAr.length(); i++) {
-                                            JSONObject c = dataAr.getJSONObject(i);
-                                            if (c != null) {
-                                                JSONObject photosJson = c.getJSONObject("photos");
-                                                if (photosJson != null) {
-                                                    JSONArray dataArray = photosJson.getJSONArray("data");
-                                                    for (int j = 0; j < dataArray.length(); j++) {
-                                                        JSONObject pictureJson = dataArray.getJSONObject(j);
-                                                        ModelImages modelImages = new ModelImages();
-//                                                        modelImages.setImageUrl(pictureJson.optString("picture"));
-                                                        modelImages.setImageUrl(pictureJson.getString("picture"));
-                                                        List<ModelImages> data = new ArrayList<>();
-                                                        data.add(modelImages);
+                            JSONObject jsonObject  = response.getJSONObject();
+                             if(jsonObject!=null){
 
-                                                        recyclerView = (RecyclerView) findViewById(R.id.rvResult);
+                                 try {
+                                     JSONObject albumsJson = jsonObject.optJSONObject("albums");
+                                        if(albumsJson!=null){
+                                            JSONArray dataJson = albumsJson.optJSONArray("data");
 
-                                                        adapter = new ImageAdapter(MainActivity.this, data);
-                                                        recyclerView.setAdapter(adapter);
-                                                        recyclerView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                                            for(int i=0; i<dataJson.length(); i++){
+
+                                                JSONObject jRoot = dataJson.getJSONObject(i);
+
+                                                //add data to the model
+                                                DataModel dataModel = new DataModel();
+
+                                                dataModel.setAlbumName(jRoot.getString("name"));
+                                                dataModel.setPhotoCount(jRoot.getInt("photo_count"));
 
 
-                                                    }
-                                                }
+                                                /*add data to arraylist*/
+                                                mDataModel.add(dataModel);
+
+                                                DataAdapter dataAdapter = new DataAdapter(getApplicationContext(),R.layout.item_list,mDataModel);
+                                                mListView.setAdapter(dataAdapter);
                                             }
+
+
+
+
+                                        }else {
+                                            System.out.println("///////////////////////////NO JSON DATA////////////////////////////");
                                         }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
+
+
+                                 } catch (JSONException e) {
+                                     e.printStackTrace();
+                                 }
+                             }else {
+                                 System.out.println("--------------------------NO JSON ALBUMS---------------------------------");
+                             }
+
+
+
+
+
+                        }else {
+                            System.out.println("****************************NO JSON RESPONSE*****************************");
                         }
+
 
 
                     }
                 });
 
-
-
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "albums{photos{album,picture}}");
+        parameters.putString("fields", "albums{name,photo_count,picture}");
         request.setParameters(parameters);
         request.executeAsync();
+
     }
+
+
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
